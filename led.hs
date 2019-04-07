@@ -2,34 +2,33 @@
 import Foreign
 import Foreign.C.Types
 import Control.Concurrent
-foreign import ccall "wiringPi.h wiringPiSetup"
-    c_wiringPiSetup :: CInt
 
-foreign import ccall "wiringPi.h pinMode"
-    c_pinMode :: CInt -> CInt -> ()
+foreign import ccall safe "prototypes.h"
+    c_wiringPiSetup :: IO Int
 
-foreign import ccall "wiringPi.h digitalWrite"
-    c_digitalWrite :: CInt -> CInt -> ()
+foreign import ccall safe "prototypes.h"
+    c_pinMode :: Int -> Int -> IO ()
 
-readyPins :: CInt -> Bool
-readyPins  ready
-    | ready == -1 = error "setup wiringPi failed !\n"
-    | otherwise = True
+foreign import ccall safe "prototypes.h"
+    c_digitalWrite :: Int -> Int -> IO ()
 
 main :: IO ()
-main = do
-	print $ readyPins c_wiringPiSetup
-	-- INPUT = 0, OUTPUT = 1
-	print $ c_pinMode 0 1
-	print $ c_digitalWrite 0 0
-	line1 <- getLine
-	print $ c_digitalWrite 0 1
-	line2 <- getLine
-	print $ c_digitalWrite 0 0
-	line3 <- getLine
-	print $ c_digitalWrite 0 1
-	line4 <- getLine
-	print $ c_digitalWrite 0 0
-	line5 <- getLine
-	print $ c_digitalWrite 0 1
+main = do 
+    pin <- c_wiringPiSetup
+    case pin of
+        -1 -> error "Pins are not available"
+        0 -> do 
+                c_pinMode 0 1
+                c_digitalWrite 0 1
+                n <- getLine
+                c_digitalWrite 0 0
+                n <- getLine
+                c_digitalWrite 0 1
+                n <- getLine
+                c_digitalWrite 0 0
+                n <- getLine
+                c_digitalWrite 0 1
+
+
+            
 
