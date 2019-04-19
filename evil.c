@@ -13,3 +13,7 @@ extern void c_pinMode(int pin, int mode) {
 extern void c_digitalWrite(int pin, int mode) {
   return digitalWrite(pin, mode);
 }
+
+extern void c_pwmWrite(int pin, int dcycle) {
+  return pwmWrite(pin, dcycle);
+}
